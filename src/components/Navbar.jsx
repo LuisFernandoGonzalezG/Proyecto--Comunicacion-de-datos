@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Activity, Radio } from 'lucide-react';
+import { Activity, Radio } from 'lucide-react';
 
 export default function Navbar() {
   return (
