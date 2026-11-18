@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Activity, Video, Sliders, AlertTriangle, Wifi, 
   ArrowRight, RefreshCw, Cpu, ShieldCheck, 
-  Lock, Network, Server, Pause, Layers
+  Lock, Network, Server, Pause, Play, Layers, SlidersHorizontal, CheckCircle
 } from 'lucide-react';
 import InfraestructuraDespliegue from './components/InfraestructuraDespliegue';
 
@@ -11,12 +11,19 @@ export default function App() {
   const [selectedNode, setSelectedNode] = useState('CAM-04');
   const [isLiveRunning, setIsLiveRunning] = useState(true);
   
+  // Métricas dinámicas
   const [latency, setLatency] = useState(12);
   const [trafficGbps, setTrafficGbps] = useState(1.84);
   const [activeDevices, setActiveDevices] = useState(31);
   const [chartPoints, setChartPoints] = useState([40, 65, 45, 80, 55, 95, 75, 110]);
 
-  // Referencias para el desplazamiento suave de la página
+  // Estados nuevos para ingresar datos personalizados al simulador
+  const [inputNodeName, setInputNodeName] = useState('CAM-08 (Vía Cajicá)');
+  const [inputCustomLatency, setInputCustomLatency] = useState('18');
+  const [inputCustomTraffic, setInputCustomTraffic] = useState('2.10');
+  const [mensajeAplicado, setMensajeAplicado] = useState(false);
+
+  // Referencias para desplazamiento suave
   const inicioRef = useRef(null);
   const problematicaRef = useRef(null);
   const modulosRef = useRef(null);
@@ -28,6 +35,7 @@ export default function App() {
     ref.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Simulación en tiempo real automática
   useEffect(() => {
     if (!isLiveRunning) return;
     const interval = setInterval(() => {
@@ -41,6 +49,16 @@ export default function App() {
     }, 3000);
     return () => clearInterval(interval);
   }, [isLiveRunning]);
+
+  // Aplicar datos ingresados por el usuario
+  const handleAplicarDatos = (e) => {
+    e.preventDefault();
+    setSelectedNode(inputNodeName);
+    setLatency(Number(inputCustomLatency) || 12);
+    setTrafficGbps(Number(inputCustomTraffic) || 1.84);
+    setMensajeAplicado(true);
+    setTimeout(() => setMensajeAplicado(false), 3000);
+  };
 
   return (
     <div className="min-h-screen bg-[#070D19] text-slate-100 font-sans selection:bg-blue-600 selection:text-white">
@@ -140,14 +158,14 @@ export default function App() {
                   <div className="absolute transform rotate-45 inset-x-0 top-1/2 h-0.5 bg-cyan-500/50"></div>
                 </div>
                 <div className="absolute top-8 left-12 bg-slate-900/90 border border-slate-700 px-3 py-1.5 rounded-lg text-xs flex items-center gap-2">
-                  <Video className="h-3.5 w-3.5 text-blue-400" /> CAM-04 (Activa)
+                  <Video className="h-3.5 w-3.5 text-blue-400" /> {selectedNode}
                 </div>
                 <div className="absolute bottom-10 right-10 bg-slate-900/90 border border-slate-700 px-3 py-1.5 rounded-lg text-xs flex items-center gap-2">
                   <Sliders className="h-3.5 w-3.5 text-emerald-400" /> SEM-02 (Adaptativo)
                 </div>
                 <div className="absolute bottom-4 left-4 bg-slate-900/80 border border-slate-800 px-3 py-2 rounded-lg text-xs">
-                  <div className="text-slate-400">VELOCIDAD PROMEDIO</div>
-                  <div className="text-lg font-bold text-white flex items-baseline gap-1">34 <span className="text-[10px] text-slate-400">km/h</span></div>
+                  <div className="text-slate-400">LATENCIA ACTUAL</div>
+                  <div className="text-lg font-bold text-cyan-400 flex items-baseline gap-1">{latency} <span className="text-[10px] text-slate-400">ms</span></div>
                 </div>
               </div>
             </div>
@@ -249,7 +267,7 @@ export default function App() {
         </section>
       </div>
 
-      {/* 5. SECCIÓN PRINCIPAL: SIMULADOR EN VIVO */}
+      {/* 5. SECCIÓN PRINCIPAL: SIMULADOR EN VIVO CON ENTRADA DE DATOS Y PAUSA/REPRODUCCIÓN */}
       <div ref={simuladorRef}>
         <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/80">
           <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -257,13 +275,21 @@ export default function App() {
               <span className="text-xs font-semibold text-blue-400 uppercase tracking-widest">Panel de Control</span>
               <h2 className="text-3xl font-extrabold text-white mt-1">Visibilidad operacional en tiempo real.</h2>
             </div>
+            
+            {/* Controles principales de Reproducción y Pausa */}
             <div className="flex items-center gap-3 bg-[#0B132B] border border-slate-800 px-4 py-2 rounded-xl">
-              <span className="text-xs text-slate-300">Estado del Simulador:</span>
+              <span className="text-xs text-slate-300">Simulación:</span>
               <button 
-                onClick={() => setIsLiveRunning(!isLiveRunning)}
-                className={`px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition cursor-pointer ${isLiveRunning ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'}`}
+                onClick={() => setIsLiveRunning(true)}
+                className={`px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition cursor-pointer ${isLiveRunning ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30' : 'bg-slate-800 text-slate-400 hover:text-white'}`}
               >
-                {isLiveRunning ? <><Activity className="h-3 w-3 animate-pulse" /> ACTIVO</> : <><Pause className="h-3 w-3" /> PAUSADO</>}
+                <Play className="h-3 w-3" /> Reproducir
+              </button>
+              <button 
+                onClick={() => setIsLiveRunning(false)}
+                className={`px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition cursor-pointer ${!isLiveRunning ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30' : 'bg-slate-800 text-slate-400 hover:text-white'}`}
+              >
+                <Pause className="h-3 w-3" /> Pausar
               </button>
             </div>
           </div>
@@ -275,20 +301,19 @@ export default function App() {
                   <Activity className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <span className="font-bold text-white text-base">ITS-Chía / NOC</span>
+                  <span className="font-bold text-white base">ITS-Chía / NOC</span>
                   <span className="text-[11px] block text-slate-400">PANEL DE ESTADO OPERATIVO</span>
                 </div>
               </div>
               <div className="flex items-center gap-4 text-xs">
                 <span className="bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800 text-slate-300 flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-emerald-400"></span> operador.noc • TLS 1.3
-                </span>
-                <span className="bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800 text-slate-300">
-                  Actualizado en vivo ({Math.floor(Math.random()*5)}s)
+                  <span className={`h-2 w-2 rounded-full ${isLiveRunning ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`}></span> 
+                  {isLiveRunning ? 'En vivo (Actualizando)' : 'Simulación Pausada'}
                 </span>
               </div>
             </div>
 
+            {/* Tarjetas de Métricas Superiores */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
               <div className="bg-[#070D19] border border-slate-800 p-4 rounded-xl">
                 <div className="text-xs text-slate-400 mb-1">DISPOSITIVOS EN LÍNEA</div>
@@ -323,7 +348,10 @@ export default function App() {
               </div>
             </div>
 
+            {/* Grid Inferior: Gráfica + Panel de Ingreso de Datos Personalizados */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              
+              {/* Gráfica de Red */}
               <div className="lg:col-span-8 bg-[#070D19] border border-slate-800 p-5 rounded-xl flex flex-col justify-between">
                 <div className="flex justify-between items-center mb-4">
                   <div>
@@ -357,42 +385,63 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Panel de Ingreso de Datos al Simulador */}
               <div className="lg:col-span-4 bg-[#070D19] border border-slate-800 p-5 rounded-xl flex flex-col justify-between">
                 <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-[10px] text-slate-400 uppercase tracking-widest">DISPOSITIVO SELECCIONADO</span>
-                    <Cpu className="h-4 w-4 text-blue-400" />
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">CONFIGURAR SIMULACIÓN</span>
+                    <SlidersHorizontal className="h-4 w-4 text-blue-400" />
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-1">Control {selectedNode}</h3>
-                  <p className="text-xs text-slate-400 mb-6">Cr. 9 / Cl. 13, Chía</p>
+                  <p className="text-xs text-slate-400 mb-4">Ingresa parámetros personalizados para probar el comportamiento del nodo:</p>
 
-                  <div className="space-y-4 text-xs">
-                    <div className="flex justify-between py-2 border-b border-slate-800/80">
-                      <span className="text-slate-400">ESTADO</span>
-                      <span className="font-semibold text-emerald-400">Ciclo adaptativo</span>
+                  <form onSubmit={handleAplicarDatos} className="space-y-3 text-xs">
+                    <div>
+                      <label className="block text-slate-300 mb-1">Nombre / Ubicación del Nodo:</label>
+                      <input 
+                        type="text" 
+                        value={inputNodeName}
+                        onChange={(e) => setInputNodeName(e.target.value)}
+                        className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                        placeholder="Ej. CAM-09 (Autopista)"
+                      />
                     </div>
-                    <div className="flex justify-between py-2 border-b border-slate-800/80">
-                      <span className="text-slate-400">RENDIMIENTO</span>
-                      <span className="font-semibold text-white">42s • fluido</span>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-slate-300 mb-1">Latencia (ms):</label>
+                        <input 
+                          type="number" 
+                          value={inputCustomLatency}
+                          onChange={(e) => setInputCustomLatency(e.target.value)}
+                          className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-300 mb-1">Tráfico (Gbps):</label>
+                        <input 
+                          type="text" 
+                          value={inputCustomTraffic}
+                          onChange={(e) => setInputCustomTraffic(e.target.value)}
+                          className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                        />
+                      </div>
                     </div>
-                    <div className="flex justify-between py-2 border-b border-slate-800/80">
-                      <span className="text-slate-400">LATENCIA LOCAL</span>
-                      <span className="font-semibold text-cyan-400">{latency} ms</span>
-                    </div>
-                    <div className="flex justify-between py-2">
-                      <span className="text-slate-400">DISPONIBILIDAD</span>
-                      <span className="font-semibold text-white">99.98%</span>
-                    </div>
-                  </div>
+
+                    <button 
+                      type="submit"
+                      className="w-full mt-2 bg-[#1D4ED8] hover:bg-blue-600 text-white py-2 rounded-lg font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-md shadow-blue-600/30"
+                    >
+                      {mensajeAplicado ? <><CheckCircle className="h-3.5 w-3.5 text-emerald-300" /> ¡Datos Aplicados!</> : 'Inyectar Datos al Nodo'}
+                    </button>
+                  </form>
                 </div>
 
-                <button 
-                  onClick={() => setLatency(Math.floor(Math.random() * 15) + 8)}
-                  className="w-full mt-6 bg-[#1D4ED8] hover:bg-blue-600 text-white py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-lg shadow-blue-600/30"
-                >
-                  <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Actualizar Telemetría
-                </button>
+                <div className="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 flex justify-between items-center">
+                  <span>Nodo activo: <strong className="text-white">{selectedNode}</strong></span>
+                  <span className="text-cyan-400 font-mono">{latency} ms</span>
+                </div>
               </div>
+
             </div>
           </div>
         </section>
