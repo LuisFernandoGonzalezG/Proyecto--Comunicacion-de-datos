@@ -1,23 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Activity, Radio, Video, Sliders, AlertTriangle, Wifi, 
-  ArrowRight, CheckCircle2, RefreshCw, Cpu, ShieldCheck, 
-  Lock, Network, Server, Play, Pause, Layers
+  Activity, Video, Sliders, AlertTriangle, Wifi, 
+  ArrowRight, RefreshCw, Cpu, ShieldCheck, 
+  Lock, Network, Server, Pause, Layers
 } from 'lucide-react';
+import InfraestructuraDespliegue from './components/InfraestructuraDespliegue';
 
 export default function App() {
-  // Estados para simulación en tiempo real
   const [activeTab, setActiveTab] = useState('inicio');
   const [selectedNode, setSelectedNode] = useState('CAM-04');
   const [isLiveRunning, setIsLiveRunning] = useState(true);
   
-  // Métricas dinámicas en tiempo real
   const [latency, setLatency] = useState(12);
   const [trafficGbps, setTrafficGbps] = useState(1.84);
   const [activeDevices, setActiveDevices] = useState(31);
   const [chartPoints, setChartPoints] = useState([40, 65, 45, 80, 55, 95, 75, 110]);
 
-  // Efecto para simular tiempo real (actualiza datos cada 3 segundos)
   useEffect(() => {
     if (!isLiveRunning) return;
     const interval = setInterval(() => {
@@ -71,7 +69,7 @@ export default function App() {
         </div>
       </nav>
 
-      {/* 2. HERO SECTION (Basado en imagen 1) */}
+      {/* 2. HERO SECTION */}
       <section className="relative overflow-hidden bg-gradient-to-b from-[#0B132B] via-[#070D19] to-[#070D19] py-16 px-4 sm:px-6 lg:px-8 border-b border-slate-800/60">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b15_1px,transparent_1px),linear-gradient(to_bottom,#1e293b15_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none"></div>
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
@@ -84,7 +82,7 @@ export default function App() {
               Optimizando la movilidad y conectividad con baja latencia.
             </h1>
             <p className="text-slate-300 text-base sm:text-lg max-w-2xl">
-              Integremos control inteligente de tráfico, video en alta definición y una red pública Wi-Fi 6 para responder en tiempo real a las necesidades del territorio.
+              Integramos control inteligente de tráfico, video en alta definición y una red pública Wi-Fi 6 para responder en tiempo real a las necesidades del territorio.
             </p>
             <div className="flex flex-wrap gap-4 pt-2">
               <button 
@@ -117,14 +115,12 @@ export default function App() {
             </div>
           </div>
 
-          {/* Mini preview del mapa en vivo en el Hero */}
           <div className="lg:col-span-5 bg-[#0B132B]/80 border border-slate-700/60 rounded-2xl p-5 shadow-2xl relative">
             <div className="flex justify-between items-center mb-4 text-xs text-slate-400">
               <span className="font-semibold uppercase tracking-wider text-slate-300">Monitoreo Municipal</span>
               <span className="flex items-center gap-1.5 text-emerald-400"><span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span> EN LÍNEA</span>
             </div>
             <div className="h-64 bg-[#050B14] rounded-xl border border-slate-800 relative overflow-hidden flex items-center justify-center p-4">
-              {/* Líneas de tráfico simuladas */}
               <div className="absolute inset-0 opacity-30">
                 <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-blue-500"></div>
                 <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-blue-500"></div>
@@ -146,7 +142,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* 3. SECCIÓN: PROBLEMÁTICA (Basado en imagen 2) */}
+      {/* 3. SECCIÓN: PROBLEMÁTICA */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
           <div>
@@ -191,7 +187,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* 4. SECCIÓN: MÓDULOS SMART CITY (Basado en imagen 3) */}
+      {/* 4. SECCIÓN: MÓDULOS SMART CITY */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/80">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
           <div>
@@ -235,7 +231,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* 5. SECCIÓN PRINCIPAL: SIMULADOR EN VIVO (Basado en imágenes 4 y 7) */}
+      {/* 5. SECCIÓN PRINCIPAL: SIMULADOR EN VIVO */}
       <section id="simulador" className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/80">
         <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
@@ -253,10 +249,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Dashboard NOC Principal */}
         <div className="bg-[#0B132B] border border-slate-700/80 rounded-2xl p-6 shadow-2xl">
-          
-          {/* Header del NOC */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-6 mb-6 border-b border-slate-800 gap-4">
             <div className="flex items-center space-x-3">
               <div className="bg-blue-600 p-2 rounded-lg">
@@ -277,7 +270,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Tarjetas de Métricas Superiores */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <div className="bg-[#070D19] border border-slate-800 p-4 rounded-xl">
               <div className="text-xs text-slate-400 mb-1">DISPOSITIVOS EN LÍNEA</div>
@@ -312,10 +304,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Grid Inferior del NOC: Gráfica Dinámica + Panel de Nodo Seleccionado */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            
-            {/* Gráfica de Rendimiento de Red Animada */}
             <div className="lg:col-span-8 bg-[#070D19] border border-slate-800 p-5 rounded-xl flex flex-col justify-between">
               <div className="flex justify-between items-center mb-4">
                 <div>
@@ -325,7 +314,6 @@ export default function App() {
                 <span className="text-xs font-mono text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded">ÚLTIMOS 60 MIN</span>
               </div>
 
-              {/* Simulación visual de gráfica de líneas con puntos dinámicos */}
               <div className="h-44 relative flex items-end justify-between gap-2 pt-6 px-2 border-b border-slate-800">
                 <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20">
                   <div className="border-b border-slate-700 w-full"></div>
@@ -350,7 +338,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Panel Lateral de Control del Nodo */}
             <div className="lg:col-span-4 bg-[#070D19] border border-slate-800 p-5 rounded-xl flex flex-col justify-between">
               <div>
                 <div className="flex justify-between items-center mb-4">
@@ -387,13 +374,11 @@ export default function App() {
                 <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Actualizar Telemetría
               </button>
             </div>
-
           </div>
-
         </div>
       </section>
 
-      {/* 6. SECCIÓN: INGENIERÍA DE RED (Basado en imagen 5) */}
+      {/* 6. SECCIÓN: INGENIERÍA DE RED */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/80">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
           <div>
@@ -427,7 +412,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* 7. SECCIÓN: HARDENING & SEGURIDAD (Basado en imagen 6) */}
+      {/* 7. SECCIÓN: HARDENING & SEGURIDAD */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/80">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
           <div>
@@ -471,6 +456,9 @@ export default function App() {
           </div>
         </div>
       </section>
+
+      {/* 8. SECCIÓN: INFRAESTRUCTURA, CERTIFICADOS Y MENSAJERÍA */}
+      <InfraestructuraDespliegue />
 
       {/* FOOTER */}
       <footer className="bg-[#050B14] border-t border-slate-800 py-8 px-4 text-center text-xs text-slate-500">
