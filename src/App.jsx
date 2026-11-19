@@ -38,19 +38,38 @@ export default function App() {
     ref.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Simulación en tiempo real automática
+  // Recepción en tiempo real desde el backend (Socket.io) respetando Reproducir/Pausar
   useEffect(() => {
     if (!isLiveRunning) return;
-    const interval = setInterval(() => {
-      setLatency(prev => Math.floor(Math.min(45, Math.max(8, prev + (Math.random() * 6 - 3)))));
-      setTrafficGbps(prev => +(Math.min(2.5, Math.max(1.2, prev + (Math.random() * 0.2 - 0.1)))).toFixed(2));
-      setActiveDevices(prev => Math.random() > 0.8 ? 32 : 31);
-      setChartPoints(prev => {
-        const nextVal = Math.floor(Math.random() * 60) + 40;
-        return [...prev.slice(1), nextVal];
-      });
-    }, 3000);
-    return () => clearInterval(interval);
+
+    const socket = io(SOCKET_URL, {
+      transports: ['websocket', 'polling'],
+    });
+
+    socket.on('actualizacion_datos', (payload) => {
+      const dato = Array.isArray(payload) ? payload[0] : payload;
+      if (!dato) return;
+
+      if (typeof dato.vehiculosPorMinuto === 'number') {
+        const gbpsCalculado = +(Math.min(2.5, Math.max(1.2, dato.vehiculosPorMinuto / 25))).toFixed(2);
+        setTrafficGbps(gbpsCalculado);
+
+        const puntoGrafica = Math.min(100, Math.max(25, Math.round((dato.vehiculosPorMinuto / 60) * 100)));
+        setChartPoints(prev => [...prev.slice(1), puntoGrafica]);
+      }
+
+      if (typeof dato.velocidadPromedio === 'number') {
+        const latenciaCalculada = Math.min(45, Math.max(8, Math.round(65 - dato.velocidadPromedio * 0.6)));
+        setLatency(latenciaCalculada);
+      }
+
+      setActiveDevices(prev => (Math.random() > 0.8 ? 32 : 31));
+    });
+
+    return () => {
+      socket.off('actualizacion_datos');
+      socket.disconnect();
+    };
   }, [isLiveRunning]);
 
   // Aplicar datos ingresados por el usuario
