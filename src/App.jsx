@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { io } from 'socket.io-client';
 import { 
   Activity, Video, Sliders, AlertTriangle, Wifi, 
   ArrowRight, RefreshCw, Cpu, ShieldCheck, 
   Lock, Network, Server, Pause, Play, Layers, SlidersHorizontal, CheckCircle
 } from 'lucide-react';
 import InfraestructuraDespliegue from './components/InfraestructuraDespliegue';
+
+const SOCKET_URL = 'https://ominous-orbit-7v44p9wqgwr7wq5-5000.app.github.dev';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('inicio');
